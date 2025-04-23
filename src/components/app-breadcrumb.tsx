@@ -37,7 +37,7 @@ export default function AppBreadcrumb() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="#">Home</BreadcrumbLink>
+          <BreadcrumbLink href="#">Forms</BreadcrumbLink>
         </BreadcrumbItem>
         {title && (
           <>
