@@ -19,12 +19,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-type IForm = {
-  id: string;
-  name: string;
-  fields: Record<string, { type: string; question: string; required: boolean }>;
-};
+import { redirect } from "next/navigation";
+import { IForm } from "@/app/form/types";
+import Link from "next/link";
 
 export default function Home() {
   const [forms, setForms] = useState<IForm[]>([]);
@@ -45,21 +42,31 @@ export default function Home() {
     }
   }
 
-  function handleViewForm(id: IForm["id"]) {}
+  function handleCreateForm() {
+    redirect(`/form/create`);
+  }
 
-  function handleAddRecord(id: IForm["id"]) {}
+  function handleViewForm(id: IForm["id"]) {
+    redirect(`/form/${id}/view`);
+  }
+
+  function handleAddRecord(id: IForm["id"]) {
+    redirect(`/form/${id}/add-record`);
+  }
 
   return (
     <div>
       <div className="flex w-full items-center py-4 px-3">
         <div className="flex w-full"></div>
 
-        <Button variant="default">Create Form</Button>
+        <Link href="/form/create">
+          <Button variant="default">Create Form</Button>
+        </Link>
       </div>
 
       <div className="rounded-md border m-2">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-muted">
             <TableRow>
               <TableHead className="w-[100px]">Name</TableHead>
               <TableHead className="text-right"></TableHead>
@@ -83,22 +90,19 @@ export default function Home() {
 
                       <DropdownMenuSeparator />
 
-                      <DropdownMenuItem
-                        onClick={() => {
-                          handleViewForm(form.id);
-                        }}
-                      >
-                        <Eye />
-                        View Form
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          handleAddRecord(form.id);
-                        }}
-                      >
-                        <FilePlus />
-                        Add Record
-                      </DropdownMenuItem>
+                      <Link href={`/form/${form.id}`}>
+                        <DropdownMenuItem>
+                          <Eye />
+                          View Form
+                        </DropdownMenuItem>
+                      </Link>
+
+                      <Link href={`/form/${form.id}/add-record`}>
+                        <DropdownMenuItem>
+                          <FilePlus />
+                          Add Record
+                        </DropdownMenuItem>
+                      </Link>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

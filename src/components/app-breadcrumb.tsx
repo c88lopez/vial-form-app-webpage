@@ -19,7 +19,7 @@ function getCurrentTitle(pathname: string) {
 
   for (const section of Sections) {
     for (const item of section.groupItems) {
-      if (item.url === pathname) {
+      if (pathname.includes(item.url)) {
         return item.title;
       }
     }
