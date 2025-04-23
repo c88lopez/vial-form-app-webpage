@@ -54,7 +54,7 @@ export default function Page() {
 
     newFields[fieldIndex] = {
       ...newFields[fieldIndex],
-      required: !newFields[fieldIndex],
+      required: !newFields[fieldIndex].required,
     };
 
     setFields(newFields);
@@ -78,7 +78,7 @@ export default function Page() {
   }
 
   function onSubmit() {
-    fetch("http://localhost:8080/form", {
+    fetch(`${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

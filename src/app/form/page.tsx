@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, FilePlus, MoreHorizontal } from "lucide-react";
+import { Eye, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { redirect } from "next/navigation";
 import { IForm } from "@/app/form/types";
 import Link from "next/link";
 
@@ -32,7 +31,9 @@ export default function Home() {
 
   async function fetchData() {
     try {
-      const response = await fetch("http://localhost:8080/form");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form`,
+      );
 
       const json = await response.json();
 
@@ -40,18 +41,6 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  }
-
-  function handleCreateForm() {
-    redirect(`/form/create`);
-  }
-
-  function handleViewForm(id: IForm["id"]) {
-    redirect(`/form/${id}/view`);
-  }
-
-  function handleAddRecord(id: IForm["id"]) {
-    redirect(`/form/${id}/add-record`);
   }
 
   return (
@@ -94,13 +83,6 @@ export default function Home() {
                         <DropdownMenuItem>
                           <Eye />
                           View Form
-                        </DropdownMenuItem>
-                      </Link>
-
-                      <Link href={`/form/${form.id}/add-record`}>
-                        <DropdownMenuItem>
-                          <FilePlus />
-                          Add Record
                         </DropdownMenuItem>
                       </Link>
                     </DropdownMenuContent>
