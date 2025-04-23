@@ -1,7 +1,4 @@
-import {
-  BookCopy,
-  LucideIcon,
-} from "lucide-react";
+import { BookCopy, LucideIcon } from "lucide-react";
 
 type Section = {
   groupName: string;
@@ -18,7 +15,7 @@ export const Sections: Section[] = [
     groupItems: [
       {
         title: "Forms",
-        url: "/",
+        url: "/form",
         icon: BookCopy,
       },
     ],
