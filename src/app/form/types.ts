@@ -5,3 +5,12 @@ export type IForm = {
   name: string;
   fields: Record<string, IFormField>;
 };
+
+export type IFormSourceData = {
+  question: string;
+  answer: string;
+};
+
+export type IFormSourceRecord = {
+  source_data: IFormSourceData[];
+};

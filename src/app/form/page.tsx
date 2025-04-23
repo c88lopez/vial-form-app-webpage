@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IForm } from "@/app/form/types";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function Home() {
   const [forms, setForms] = useState<IForm[]>([]);
@@ -40,6 +41,7 @@ export default function Home() {
       setForms(json.data ?? []);
     } catch (error) {
       console.error(error);
+      toast.error("Error fetching forms");
     }
   }
 

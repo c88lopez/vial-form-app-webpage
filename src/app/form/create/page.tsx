@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { IFormField } from "@/app/form/types";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Page() {
   const [name, setName] = useState<string>("");
@@ -89,11 +90,13 @@ export default function Page() {
       }),
     }).then((response) => {
       if (response.status === 200) {
+        toast.success("Form Created");
         redirect("/form");
       }
 
       response.json().then((json) => {
         console.error(new Error(json.message));
+        toast.error("Error creating form");
       });
     });
   }
