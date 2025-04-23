@@ -1,0 +1,15 @@
+services:
+  webapp:
+    container_name: vial-backend-b-webapp
+    image: node:18.15.0
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
