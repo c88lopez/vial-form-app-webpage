@@ -23,8 +23,6 @@ export default function Page() {
   }
 
   function handleNewInput(type: string) {
-    console.log({ type });
-
     const nextFieldIndex = Object.keys(fields).length + 1;
 
     const newFields: Record<string, IFormField> = {
@@ -166,10 +164,10 @@ export default function Page() {
                   Text
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleNewInput("email")}>
-                  Text Area
+                  Email
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleNewInput("password")}>
-                  Datetime
+                  Password
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleNewInput("checkbox")}>
                   Checkbox
