@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IForm } from "@/app/form/types";
+import { IForm, IFormSourceRecord } from "@/app/form/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -11,17 +11,42 @@ export default function Page() {
   const { id } = useParams();
 
   const [form, setForm] = useState<IForm | undefined>();
+  const [records, setRecords] = useState<IFormSourceRecord[] | undefined>();
+  const [newRecord, setNewRecord] = useState<boolean>(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form/${id}`).then(
-      (response) => {
+    Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form/${id}`).then(
+        (response) => {
+          response.json().then((body) => {
+            setForm(body.data);
+          });
+        },
+      ),
+
+      fetch(
+        `${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form/${id}/record`,
+      ).then((response) => {
         response.json().then((body) => {
-          setForm(body.data);
+          setRecords(body.data);
         });
-      },
-    );
+      }),
+    ]);
   }, []);
+
+  useEffect(() => {
+    if (newRecord) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form/${id}/record`,
+      ).then((response) => {
+        response.json().then((body) => {
+          setRecords(body.data);
+          setNewRecord(false);
+        });
+      });
+    }
+  }, [newRecord]);
 
   function handleInputChange(fieldIndex: string, value: string) {
     const newAnswers = answers;
@@ -32,8 +57,6 @@ export default function Page() {
   }
 
   function onSubmit() {
-    console.log("onSubmit", answers);
-
     fetch(
       `${process.env.NEXT_PUBLIC_VIAL_FORM_APP_API}/form/${id}/add-record`,
       {
@@ -47,12 +70,16 @@ export default function Page() {
       },
     ).then((response) => {
       if (response.status === 200) {
-        toast("Record added");
+        setAnswers({});
+        toast.success("Record added");
+        setNewRecord(true);
+
         return;
       }
 
       response.json().then((json) => {
         console.error(json.message);
+        toast.error("Error adding form record");
       });
     });
   }
@@ -65,6 +92,7 @@ export default function Page() {
 
           <form
             onSubmit={(e) => {
+              e.currentTarget.reset();
               e.preventDefault();
               onSubmit();
             }}
@@ -73,26 +101,49 @@ export default function Page() {
               const field = form.fields[fieldIndex];
 
               return (
-                <div
-                  className="grid w-full max-w-sm items-center gap-1.5 py-3"
-                  key={fieldIndex}
-                >
-                  {field.question}
-                  {field.required && " *"}
-                  <Input
-                    type={field.type}
-                    name={fieldIndex}
-                    required={field.required}
-                    onChange={(e) =>
-                      handleInputChange(fieldIndex, e.target.value)
-                    }
-                  />
+                <div key={fieldIndex}>
+                  <div
+                    className="grid w-full max-w-sm items-center gap-1.5 py-3"
+                    key={fieldIndex}
+                  >
+                    {field.question}
+                    {field.required && " *"}
+                    <Input
+                      type={field.type}
+                      name={fieldIndex}
+                      required={field.required}
+                      onChange={(e) =>
+                        handleInputChange(fieldIndex, e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
               );
             })}
 
             <Button type={"submit"}>Add Record</Button>
           </form>
+
+          {!records ||
+            (records.length == 0 && <p>No records for this form yet</p>)}
+
+          {records && records.length > 0 && (
+            <div className="py-3">
+              Records:
+              {records.map((data, dataIndex) => (
+                <div key={dataIndex} className="border-1 my-2">
+                  {data.source_data.map(({ question, answer }, index) => {
+                    return (
+                      <div key={index} className="my-2">
+                        <p>Question: {question}</p>
+                        <p>Answer: {answer}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
