@@ -3,9 +3,11 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IForm, IFormSourceRecord } from "@/app/form/types";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 export default function Page() {
   const { id } = useParams();
@@ -13,7 +15,9 @@ export default function Page() {
   const [form, setForm] = useState<IForm | undefined>();
   const [records, setRecords] = useState<IFormSourceRecord[] | undefined>();
   const [newRecord, setNewRecord] = useState<boolean>(false);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
+
+  const inputTypes = ["text", "email", "password"];
 
   useEffect(() => {
     Promise.all([
@@ -52,6 +56,14 @@ export default function Page() {
     const newAnswers = answers;
 
     newAnswers[fieldIndex] = value;
+
+    setAnswers(newAnswers);
+  }
+
+  function handleCheckboxChange(fieldIndex: string) {
+    const newAnswers = answers;
+
+    newAnswers[fieldIndex] = !newAnswers[fieldIndex];
 
     setAnswers(newAnswers);
   }
@@ -108,14 +120,35 @@ export default function Page() {
                   >
                     {field.question}
                     {field.required && " *"}
-                    <Input
-                      type={field.type}
-                      name={fieldIndex}
-                      required={field.required}
-                      onChange={(e) =>
-                        handleInputChange(fieldIndex, e.target.value)
-                      }
-                    />
+
+                    {field.type === "checkbox" && (
+                      <Checkbox
+                        name={fieldIndex}
+                        required={field.required}
+                        onCheckedChange={() => handleCheckboxChange(fieldIndex)}
+                      />
+                    )}
+
+                    {field.type === "textarea" && (
+                      <Textarea
+                        name={fieldIndex}
+                        required={field.required}
+                        onChange={(e) =>
+                          handleInputChange(fieldIndex, e.target.value)
+                        }
+                      />
+                    )}
+
+                    {inputTypes.includes(field.type) && (
+                      <Input
+                        type={field.type}
+                        name={fieldIndex}
+                        required={field.required}
+                        onChange={(e) =>
+                          handleInputChange(fieldIndex, e.target.value)
+                        }
+                      />
+                    )}
                   </div>
                 </div>
               );

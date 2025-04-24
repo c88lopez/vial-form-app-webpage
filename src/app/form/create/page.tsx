@@ -166,6 +166,9 @@ export default function Page() {
                 <DropdownMenuItem onClick={() => handleNewInput("text")}>
                   Text
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleNewInput("textarea")}>
+                  Text Area
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleNewInput("email")}>
                   Email
                 </DropdownMenuItem>
